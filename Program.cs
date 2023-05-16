@@ -15,12 +15,10 @@ app.UseCors(builder => builder
 .AllowCredentials());
 
 app.UseSwagger();
+app.UseSwaggerUI();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
-  
-    app.UseSwaggerUI();
-}
+{ }
 
 app.UseHttpsRedirection();
 
