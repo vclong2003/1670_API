@@ -9,7 +9,7 @@ namespace _1670_API.Models
         public string Phone { get; set; }
         [JsonIgnore]
         public User user { get; set; }
-        public int userID { get; set; }
+        public int? userID { get; set; }
         [JsonIgnore]
         public List<Order> orders { get; set; }
 

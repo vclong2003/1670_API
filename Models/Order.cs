@@ -12,7 +12,7 @@ namespace _1670_API.Models
         public string Date { get; set; }
         [JsonIgnore]
         public User user { get; set; }
-        public int userID { get; set; }
+        public int? userID { get; set; }
         [JsonIgnore]
         public Store store { get; set; }
         public int? storeID { get; set; }
