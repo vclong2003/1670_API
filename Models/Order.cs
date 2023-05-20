@@ -9,7 +9,7 @@ namespace _1670_API.Models
         public string Address { get; set; }
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
-        public string Date { get; set; }
+        public DateTime? Date { get; set; }
         [JsonIgnore]
         public User user { get; set; }
         public int? userID { get; set; }
