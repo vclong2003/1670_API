@@ -73,7 +73,15 @@ namespace _1670_API.Controllers
 
             if (currentUser != null) { return StatusCode(200, currentUser); }
 
+            Response.Cookies.Delete("token");
             return StatusCode(401, "validation_fail");
+        }
+
+        [HttpDelete("logout")] //logout
+        public ActionResult Logout()
+        {
+            Response.Cookies.Delete("token");
+            return StatusCode(200);
         }
     }
 
