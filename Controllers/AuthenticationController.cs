@@ -37,7 +37,7 @@ namespace _1670_API.Controllers
                 Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
                 Role = "CUSTOMER"
             };
-
+            //HEHE
             // Add the new user to the db
             _dataContext.Add(newUser);
             try { await _dataContext.SaveChangesAsync(); }
