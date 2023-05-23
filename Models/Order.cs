@@ -10,15 +10,11 @@ namespace _1670_API.Models
         public string PaymentMethod { get; set; }
         public string Status { get; set; }
         public DateTime? Date { get; set; }
-        [JsonIgnore]
-        public User user { get; set; }
-        public int? userID { get; set; }
-        [JsonIgnore]
-        public Store store { get; set; }
-        public int? storeID { get; set; }
+
+        public User? User { get; set; }
+        public Store? Store { get; set; }
+
         [JsonIgnore]
         public List<OrderItem> orderItems { get; set; }
-
-
     }
 }

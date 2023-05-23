@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using _1670_API.Data;
 
@@ -11,9 +12,11 @@ using _1670_API.Data;
 namespace _1670_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230523010506_testDb")]
+    partial class testDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace _1670_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int>("CategoryID")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DateAdded")
@@ -57,7 +60,7 @@ namespace _1670_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("CategoryID");
 
                     b.ToTable("Books");
                 });
@@ -234,13 +237,13 @@ namespace _1670_API.Migrations
 
             modelBuilder.Entity("_1670_API.Models.Book", b =>
                 {
-                    b.HasOne("_1670_API.Models.Category", "Category")
+                    b.HasOne("_1670_API.Models.Category", "category")
                         .WithMany("Books")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("category");
                 });
 
             modelBuilder.Entity("_1670_API.Models.BookStore", b =>
@@ -251,15 +254,15 @@ namespace _1670_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("_1670_API.Models.Store", "Store")
+                    b.HasOne("_1670_API.Models.Store", "store")
                         .WithMany()
                         .HasForeignKey("StoreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Store");
-
                     b.Navigation("book");
+
+                    b.Navigation("store");
                 });
 
             modelBuilder.Entity("_1670_API.Models.CartItem", b =>

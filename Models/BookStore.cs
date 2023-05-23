@@ -7,9 +7,11 @@ namespace _1670_API.Models
     public class BookStore
     {
         public int StoreID { get; set; }
+
         [JsonIgnore]
-        public Store store { get; set; }
+        public Store Store { get; set; }
         public int BookID { get; set; }
+
         [JsonIgnore]
         public Book book { get; set; }
 

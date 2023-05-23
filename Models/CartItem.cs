@@ -13,7 +13,5 @@ namespace _1670_API.Models
         public Book book { get; set; }
         public int BookID { get; set; }
         public int quantity { get; set; }
-
-
     }
 }
