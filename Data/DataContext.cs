@@ -7,7 +7,6 @@ namespace _1670_API.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-
         }
 
         public DbSet<Book> Books { get; set; } = null;
