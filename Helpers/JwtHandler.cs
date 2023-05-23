@@ -17,7 +17,7 @@ namespace _1670_API.Helpers
         public static string GenerateToken(User user)
         {
             var content = new[] {
-                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
             };
@@ -60,7 +60,7 @@ namespace _1670_API.Helpers
 
             UserDTO userDTO = new()
             {
-                Id = int.Parse(tokenContent.FindFirstValue(ClaimTypes.Sid)),
+                Id = int.Parse(tokenContent.FindFirstValue(ClaimTypes.NameIdentifier)),
                 Email = tokenContent.FindFirstValue(ClaimTypes.Email),
                 Role = tokenContent.FindFirstValue(ClaimTypes.Role),
             };
