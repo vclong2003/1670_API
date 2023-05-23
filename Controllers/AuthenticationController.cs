@@ -31,7 +31,7 @@ namespace _1670_API.Controllers
                 Name = userDto.Name,
                 Email = userDto.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
-                Role = "customer"
+                Role = "CUSTOMER"
             };
 
             _dataContext.Add(newUser);
