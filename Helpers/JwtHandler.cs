@@ -14,6 +14,7 @@ namespace _1670_API.Helpers
         private static readonly SymmetricSecurityKey _secretKey = new(Encoding.ASCII.GetBytes("testMyKeyVCLsdjflksjdlkfsjdklhdsjghkjdfhgjdfhjsa")); // will move to global later
         private static readonly DateTime _expire = DateTime.UtcNow.AddDays(1);
 
+        // Generates a JWT token based on the provided user information
         public static string GenerateToken(User user)
         {
             var content = new[] {
@@ -33,6 +34,7 @@ namespace _1670_API.Helpers
             return _handler.WriteToken(token);
         }
 
+        // Validates and extracts user information from a JWT token stored in the HTTP context's cookie
         public static UserDTO? ValiateToken(HttpContext httpContext)
         {
             string? token = httpContext.Request.Cookies["token"];

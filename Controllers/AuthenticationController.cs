@@ -18,14 +18,18 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
-
-        [HttpPost("register")] // Body: name, email, password
+        // POST: /auth/register
+        // Registers a new user with the provided information
+        // Body: name, email, password
+        [HttpPost("register")]
         public async Task<ActionResult> Register(UserDTO userDto)
         {
+            // Check if a user with the same email already exists
             var exsistedUser = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
 
             if (exsistedUser != null) { return StatusCode(400, "user_existed"); }
 
+            // Create a new user entity with the provided details
             User newUser = new()
             {
                 Name = userDto.Name,
@@ -34,8 +38,8 @@ namespace _1670_API.Controllers
                 Role = "CUSTOMER"
             };
 
+            // Add the new user to the db
             _dataContext.Add(newUser);
-
             try { await _dataContext.SaveChangesAsync(); }
             catch (Exception e)
             {
@@ -43,14 +47,18 @@ namespace _1670_API.Controllers
                 return StatusCode(500);
             }
 
-            //success
+            // Success: Generate a JWT token for the new user and set it in the response cookie
             Response.Cookies.Append("token", JwtHandler.GenerateToken(newUser));
             return StatusCode(200);
         }
 
-        [HttpPost("login")] // Body: email, password
+        // POST: /auth/login
+        // Logs in a user with the provided email and password
+        // Body: email, password
+        [HttpPost("login")]
         public async Task<ActionResult> Login(UserDTO userDto)
         {
+            // Find the user with the provided email
             var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
 
             if (user == null) { return StatusCode(404, "user_not_found"); }
@@ -66,24 +74,31 @@ namespace _1670_API.Controllers
             return StatusCode(400, "validation_error");
         }
 
-        [HttpGet] //get current user
+        // GET: /auth
+        // Retrieves the current authenticated user
+        [HttpGet]
         public ActionResult Auth()
         {
             UserDTO? currentUser = JwtHandler.ValiateToken(Request.HttpContext);
 
-            if (currentUser != null) { return StatusCode(200, currentUser); }
+            if (currentUser != null)
+            {
+                // User is authenticated: Return the current user information
+                return StatusCode(200, currentUser);
+            }
 
+            // Invalid or no token: Remove the token from the response cookie and return unauthorized status
             Response.Cookies.Delete("token");
             return StatusCode(401, "validation_fail");
         }
 
-        [HttpDelete("logout")] //logout
+        // DELETE: /auth/logout
+        // Logs out the current user by removing the token from the response cookie
+        [HttpDelete("logout")]
         public ActionResult Logout()
         {
             Response.Cookies.Delete("token");
             return StatusCode(200);
         }
     }
-
-
 }
