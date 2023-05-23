@@ -100,5 +100,7 @@ namespace _1670_API.Controllers
             Response.Cookies.Delete("token");
             return StatusCode(200);
         }
+
+        //test notify
     }
 }
