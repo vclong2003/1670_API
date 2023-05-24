@@ -48,7 +48,12 @@ namespace _1670_API.Controllers
             }
 
             // Success: Generate a JWT token for the new user and set it in the response cookie
-            Response.Cookies.Append("token", JwtHandler.GenerateToken(newUser));
+            Response.Cookies.Append("token", JwtHandler.GenerateToken(newUser), new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None
+            });
             return StatusCode(200);
         }
 
@@ -67,7 +72,13 @@ namespace _1670_API.Controllers
 
             if (passwordMatched)
             {
-                Response.Cookies.Append("token", JwtHandler.GenerateToken(user));
+                // Success: Generate a JWT token for the new user and set it in the response cookie
+                Response.Cookies.Append("token", JwtHandler.GenerateToken(user), new CookieOptions
+                {
+                    Secure = true,
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None
+                });
                 return StatusCode(200);
             }
 
