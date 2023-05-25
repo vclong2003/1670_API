@@ -6,10 +6,10 @@ namespace _1670_API.Models
     public class CartItem
     {
 
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public Account Customer { get; set; }
 
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
         public Product Product { get; set; }
 
         public int Quantity { get; set; }

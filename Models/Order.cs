@@ -4,13 +4,13 @@
     {
         public string Id { get; set; }
 
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public Account Customer { get; set; }
 
-        public int ShippingAddressId { get; set; }
+        public string ShippingAddressId { get; set; }
         public ShippingAddress ShippingAddress { get; set; }
 
-        public int? StaffId { get; set; }
+        public string? StaffId { get; set; }
         public Staff? Staff { get; set; }
 
         public double ShippingFee { get; set; }
