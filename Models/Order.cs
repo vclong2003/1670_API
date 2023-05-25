@@ -1,20 +1,20 @@
-﻿using System.Text.Json.Serialization;
-
-namespace _1670_API.Models
+﻿namespace _1670_API.Models
 {
     public class Order
     {
-        public int Id { get; set; }
-        public string Phone { get; set; }
-        public string Address { get; set; }
-        public string PaymentMethod { get; set; }
-        public string Status { get; set; }
-        public DateTime? Date { get; set; }
+        public string Id { get; set; }
 
-        public User? User { get; set; }
-        public Store? Store { get; set; }
+        public int CustomerId { get; set; }
+        public Account Customer { get; set; }
 
-        [JsonIgnore]
-        public List<OrderItem> orderItems { get; set; }
+        public int ShippingAddressId { get; set; }
+        public ShippingAddress ShippingAddress { get; set; }
+
+        public int? StaffId { get; set; }
+        public Staff? Staff { get; set; }
+
+        public double ShippingFee { get; set; }
+
+        public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
 }
