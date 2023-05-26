@@ -13,6 +13,8 @@
         public int? StaffId { get; set; }
         public Staff? Staff { get; set; }
 
+        public DateTime Date { get; set; }
+
         public double ShippingFee { get; set; }
 
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();

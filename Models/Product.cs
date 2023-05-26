@@ -7,6 +7,7 @@
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
+        public string ThumbnailUrl { get; set; }
         public string Name { get; set; }
         public string Author { get; set; }
         public string Publisher { get; set; }
