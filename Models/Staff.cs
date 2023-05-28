@@ -13,4 +13,13 @@
 
         public ICollection<Order> Orders { get; } = new List<Order>();
     }
+
+    public class StaffDTO
+    {
+        public int? Id { get; set; }
+        public int? AccountId { get; set; }
+        public string? Name { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
+    }
 }

@@ -19,4 +19,14 @@
 
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
+
+    public class OrderDTO
+    {
+        public string? Id { get; set; }
+        public int? CustomerId { get; set; }
+        public int? ShippingAddressId { get; set; }
+        public int? StaffId { get; set; }
+        public DateTime? Date { get; set; }
+        public double? ShippingFee { get; set; }
+    }
 }

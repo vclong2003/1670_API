@@ -14,4 +14,11 @@ namespace _1670_API.Models
         public ICollection<Order> Orders { get; } = new List<Order>();
         public ICollection<CartItem> CartItems { get; } = new List<CartItem>();
     }
+
+    public class AccountDTO
+    {
+        public int? Id { get; set; }
+        public string? Email { get; set; }
+        public string? Role { get; set; }
+    }
 }
