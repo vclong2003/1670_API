@@ -5,7 +5,6 @@ namespace _1670_API.Models
     [PrimaryKey(nameof(CustomerId), nameof(ProductId))]
     public class CartItem
     {
-
         public int CustomerId { get; set; }
         public Account Customer { get; set; }
 

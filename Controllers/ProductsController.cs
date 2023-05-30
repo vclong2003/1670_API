@@ -1,4 +1,5 @@
 ﻿using _1670_API.Data;
+using _1670_API.Helpers;
 using _1670_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,10 @@ namespace _1670_API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProduct(int id, ProductDTO productDTO)
         {
+            var accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
+            if (accountDTO.Role != "MANAGER") { return StatusCode(403, "forbidden"); }
+
             var product = await _dataContext.Products.FindAsync(id);
             if (product == null) { return StatusCode(404, "product-not-found"); }
 
