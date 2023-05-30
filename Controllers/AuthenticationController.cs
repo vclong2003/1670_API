@@ -17,12 +17,14 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
+        // POST: /auth/register
+        // Registers a new user with the provided information
+        // Body: email, password
         [HttpPost("register")]
         public async Task<ActionResult> Register(AccountDTO accountDTO)
         {
-
             var exsistingAccount = await _dataContext.Accounts.FirstOrDefaultAsync(a => a.Email == accountDTO.Email);
-            if (exsistingAccount != null) { return StatusCode(400, "user-existed"); }
+            if (exsistingAccount != null) { return StatusCode(400, "user-existed"); } // Check if an account with the same email already exists
 
             Account newAccount = new()
             {
@@ -39,7 +41,7 @@ namespace _1670_API.Controllers
                 return StatusCode(500);
             }
 
-
+            // Generate a JWT token and append it to the response cookies
             Response.Cookies.Append("token", JwtHandler.GenerateToken(newAccount), new CookieOptions
             {
                 Secure = true,
@@ -50,7 +52,9 @@ namespace _1670_API.Controllers
             return StatusCode(200);
         }
 
-
+        // POST: /auth/login
+        // Authenticates a user with the provided credentials
+        // Body: email, password
         [HttpPost("login")]
         public async Task<ActionResult> Login(AccountDTO accountDTO)
         {
@@ -75,7 +79,8 @@ namespace _1670_API.Controllers
             return StatusCode(400, "validation-error");
         }
 
-
+        // GET: /auth
+        // Retrieves the authenticated account information
         [HttpGet]
         public ActionResult Auth()
         {
