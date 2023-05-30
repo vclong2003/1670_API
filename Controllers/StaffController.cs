@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace _1670_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/staff")]
     [ApiController]
     public class StaffController : ControllerBase
     {

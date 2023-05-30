@@ -1,13 +1,12 @@
 ﻿using _1670_API.Data;
 using _1670_API.Helpers;
 using _1670_API.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/cart")]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -21,14 +20,16 @@ namespace _1670_API.Controllers
         {
 
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if(accountDTO == null){
+            if (accountDTO == null)
+            {
                 return StatusCode(401, "Unauthorized");
             }
             else
             {
                 var carts = await _dataContext.CartItems.Where(c => c.CustomerId == accountDTO.Id).
-                    Include(c=>c.Product)
-                    .Select(c => new {
+                    Include(c => c.Product)
+                    .Select(c => new
+                    {
                         name = c.Product.Name,
                         quantity = c.Quantity,
                         price = c.Product.Price
@@ -48,7 +49,7 @@ namespace _1670_API.Controllers
             else
             {
                 var current = await _dataContext.CartItems.FindAsync(accountDTO.Id, cartItem.ProductId);
-                if(current is null)
+                if (current is null)
                 {
                     int quantity = _dataContext.Products
                         .Where(p => p.Id == cartItem.ProductId)
@@ -82,23 +83,29 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> Update(int quantityAdded, int id)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null){
+            if (accountDTO == null)
+            {
                 return StatusCode(401, "Unauthorized");
             }
-            else{
+            else
+            {
                 var current = await _dataContext.CartItems.FindAsync(accountDTO.Id, id);
-                if (current is null){
+                if (current is null)
+                {
                     return StatusCode(401, "This item is not exist");
                 }
-                else{
+                else
+                {
                     int quantity = _dataContext.Products
                         .Where(p => p.Id == id)
                         .Select(p => p.Quantity)
                         .SingleOrDefault();
-                    if (quantity < quantityAdded){
+                    if (quantity < quantityAdded)
+                    {
                         return StatusCode(401, "Product is exceed to stock");
                     }
-                    else{
+                    else
+                    {
                         current.Quantity = quantityAdded;
                         await _dataContext.SaveChangesAsync();
                         return StatusCode(200, "Update Cart Item Successfully");

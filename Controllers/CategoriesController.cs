@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
-    [Route("api/categories")]
+    [Route("api/category")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {
@@ -20,13 +20,6 @@ namespace _1670_API.Controllers
         {
             var categories = await _dataContext.Categories.Select(c => new { c.Id, c.Name }).ToListAsync();
             return StatusCode(200, categories);
-        }
-
-        [HttpGet("test/{id}")]
-        public async Task<ActionResult> GetTest(int id)
-        {
-            var category = await _dataContext.Categories.FindAsync(id);
-            return StatusCode(200, category.Products);
         }
 
         [HttpGet("{id}")]
