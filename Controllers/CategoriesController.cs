@@ -30,7 +30,7 @@ namespace _1670_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<Category>>> GetOne(int id)
+        public async Task<ActionResult> GetOne(int id)
         {
             var result = await _dataContext.Categories.FindAsync(id);
 
@@ -38,7 +38,7 @@ namespace _1670_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Category>>> Add(CategoryDTO categoryDTO)
+        public async Task<ActionResult> Add(CategoryDTO categoryDTO)
         {
             Category newCategory = new()
             {
@@ -53,7 +53,7 @@ namespace _1670_API.Controllers
         }
 
         [HttpPut("id")]
-        public async Task<ActionResult<List<Category>>> Update(int id, CategoryDTO categoryDTO)
+        public async Task<ActionResult> Update(int id, CategoryDTO categoryDTO)
         {
             var category = await _dataContext.Categories.FindAsync(id);
             if (category == null)
