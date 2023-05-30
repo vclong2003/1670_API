@@ -19,13 +19,13 @@ namespace _1670_API.Controllers
         // GET: /api/products
         // Retrieves products based on optional categoryId and searchValue parameters
         [HttpGet]
-        public async Task<ActionResult> GetProducts([FromQuery] int? categoryId = null, [FromQuery] string? searchValue = null)
+        public async Task<ActionResult> GetProducts([FromQuery] int? category = null, [FromQuery] string? search = null)
         {
             IQueryable<Product> query = _dataContext.Products;
 
             // Apply filters if they are provided
-            if (categoryId != null) { query = query.Where(p => p.CategoryId == categoryId); }
-            if (searchValue != null) { query = query.Where(p => p.Name.Contains(searchValue)); }
+            if (category != null) { query = query.Where(p => p.CategoryId == category); }
+            if (search != null) { query = query.Where(p => p.Name.Contains(search)); }
 
             // Select some properties and retrieve products
             var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author }).ToListAsync();
