@@ -21,7 +21,8 @@ namespace _1670_API.Controllers
         {
 
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if(accountDTO == null){
+            if(accountDTO == null)
+            {
                 return StatusCode(401, "Unauthorized");
             }
             else
