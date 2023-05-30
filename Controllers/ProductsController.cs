@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/product")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -28,7 +28,7 @@ namespace _1670_API.Controllers
             if (searchValue != null) { query = query.Where(p => p.Name.Contains(searchValue)); }
 
             // Select some properties and retrieve products
-            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl }).ToListAsync();
+            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author }).ToListAsync();
 
             return StatusCode(200, products);
         }
