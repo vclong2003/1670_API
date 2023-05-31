@@ -41,7 +41,7 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> AddItemToCart(CartItemDTO cartItemDTO)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
             var existedItem = await _dataContext.CartItems.FindAsync(accountDTO.Id, cartItemDTO.ProductId);
             if (existedItem != null) { return StatusCode(400, "Product already existed in cart!"); }
@@ -66,7 +66,7 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> UpdateItemQuantity(int id, CartItemDTO cartItemDTO)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
             var item = await _dataContext.CartItems.FindAsync(accountDTO.Id, id);
             if (item == null) { return StatusCode(404, "Item not existed!"); }
@@ -84,10 +84,10 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
             CartItem item = await _dataContext.CartItems.FindAsync(accountDTO.Id, id);
-            if (item == null) { return StatusCode(404, "item-not-exist"); }
+            if (item == null) { return StatusCode(404, "Item not existed!"); }
 
             _dataContext.CartItems.Remove(item);
             await _dataContext.SaveChangesAsync();

@@ -25,7 +25,7 @@ namespace _1670_API.Controllers
 
             // Apply filters if they are provided
             if (category != null) { query = query.Where(p => p.CategoryId == category); }
-            if (search != null) { query = query.Where(p => p.Name.Contains(search)); }
+            if (search != null) { query = query.Where(p => p.Name.Contains(search) || p.Author.Contains(search)); }
             if (skip != null) { query = query.Skip((int)skip); }
             if (limit != null) { query = query.Take((int)limit); }
 
