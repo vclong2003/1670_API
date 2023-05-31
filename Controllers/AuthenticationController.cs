@@ -88,15 +88,21 @@ namespace _1670_API.Controllers
 
             if (account != null) { return StatusCode(200, account); }
 
-            Response.Cookies.Delete("token");
-
             return StatusCode(401, "validation-fail");
         }
 
+
+        // DELETE: /auth/logout
+        // Log out (clear token)
         [HttpDelete("logout")]
         public ActionResult Logout()
         {
-            Response.Cookies.Delete("token");
+            Response.Cookies.Delete("token", new CookieOptions
+            {
+                Secure = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None
+            });
             return StatusCode(200);
         }
     }
