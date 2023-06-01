@@ -16,20 +16,21 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
-        // GET: /api/products
+        // GET: /api/product/?category={categoryId}&search={searchValue}&skip={skip}&limit={limit}
         // Retrieves products based on optional categoryId and searchValue parameters
         [HttpGet]
         public async Task<ActionResult> GetProducts([FromQuery] int? category = null, [FromQuery] string? search = null, [FromQuery] int? skip = null, [FromQuery] int? limit = null)
         {
+            // Create a query to retrieve products
             IQueryable<Product> query = _dataContext.Products;
 
             // Apply filters if they are provided
             if (category != null) { query = query.Where(p => p.CategoryId == category); }
-            if (search != null) { query = query.Where(p => p.Name.Contains(search) || p.Author.Contains(search)); }
+            if (search != null) { query = query.Where(p => p.Name.Contains(search) || p.Author.Contains(search)); } // Search by name or author
             if (skip != null) { query = query.Skip((int)skip); }
             if (limit != null) { query = query.Take((int)limit); }
 
-            // Select some properties and retrieve products
+            // Execute the query and retrieve products
             var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author }).ToListAsync();
 
             return StatusCode(200, products);
@@ -41,12 +42,14 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> GetProduct(int id)
         {
             var product = await _dataContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product == null) { return StatusCode(404, "product-not-found"); }
+            if (product == null) { return StatusCode(404, "Product not found!"); }
             return StatusCode(200, product);
         }
 
         // POST: /api/products
         // Adds a new product with the provided information
+        // Only MANAGER can add new products
+        // Sample request body: {"name": "product name", "price": 100, "description": "...", "categoryId": 1}
         [HttpPost]
         public async Task<ActionResult> AddProduct(ProductDTO productDTO)
         {
@@ -67,6 +70,8 @@ namespace _1670_API.Controllers
 
         // PUT: /api/products/{id}
         // Updates an existing product with the provided information
+        // Only MANAGER can update products
+        // Sample request body: {"name": "product name", "price": 100, "description": "...", "categoryId": 1}
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProduct(int id, ProductDTO productDTO)
         {
@@ -77,7 +82,7 @@ namespace _1670_API.Controllers
             var product = await _dataContext.Products.FindAsync(id);
             if (product == null) { return StatusCode(404, "product-not-found"); }
 
-            product.Name = productDTO.Name ?? product.Name;
+            product.Name = productDTO.Name ?? product.Name; // If productDTO.Name is null, product.Name will not be updated
             product.Price = productDTO.Price ?? product.Price;
             product.Description = productDTO.Description ?? product.Description;
             product.CategoryId = productDTO.CategoryId ?? product.CategoryId;

@@ -16,6 +16,8 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
+        // GET: /api/cart
+        // Retrieves all cart items of the current user
         [HttpGet]
         public async Task<ActionResult> GetAllCartItems()
         {
@@ -37,6 +39,8 @@ namespace _1670_API.Controllers
 
         }
 
+        // POST: /api/cart
+        // Adds a new item to the cart
         [HttpPost]
         public async Task<ActionResult> AddItemToCart(CartItemDTO cartItemDTO)
         {
@@ -62,6 +66,8 @@ namespace _1670_API.Controllers
             return StatusCode(200);
         }
 
+        // PUT: /api/cart/{id}
+        // Updates the quantity of a specific item in the cart
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateItemQuantity(int id, CartItemDTO cartItemDTO)
         {
@@ -80,6 +86,8 @@ namespace _1670_API.Controllers
             return StatusCode(200);
         }
 
+        // DELETE: /api/cart/{id}
+        // Deletes a specific item in the cart
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

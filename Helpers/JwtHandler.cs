@@ -10,7 +10,9 @@ namespace _1670_API.Helpers
     public class JwtHandler
     {
         private static readonly JwtSecurityTokenHandler _handler = new();
-        private static readonly SymmetricSecurityKey _secretKey = new(Encoding.ASCII.GetBytes("testMyKeyVCLsdjflksjdlkfsjdklhdsjghkjdfhgjdfhjsa")); // will move to global later
+        // TODO: Move the secret key to global
+        private static readonly SymmetricSecurityKey _secretKey = new(Encoding.ASCII.GetBytes("testMyKeyVCLsdjflksjdlkfsjdklhdsjghkjdfhgjdfhjsa"));
+        // TODO: Move the expiration time to global
         private static readonly DateTime _expire = DateTime.UtcNow.AddDays(1);
 
         // Generates a JWT token based on the provided user information
@@ -24,9 +26,9 @@ namespace _1670_API.Helpers
 
             var tokenParameters = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(content),
-                Expires = _expire,
-                SigningCredentials = new SigningCredentials(_secretKey, SecurityAlgorithms.HmacSha256Signature)
+                Subject = new ClaimsIdentity(content), // The user information to be stored in the token
+                Expires = _expire, // The expiration time of the token
+                SigningCredentials = new SigningCredentials(_secretKey, SecurityAlgorithms.HmacSha256Signature) // The secret key used to sign the token
             };
 
             var token = _handler.CreateToken(tokenParameters);
@@ -48,7 +50,6 @@ namespace _1670_API.Helpers
             };
 
             ClaimsPrincipal tokenContent;
-
             try
             {
                 tokenContent = _handler.ValidateToken(token, validationParameters, out _);
@@ -56,12 +57,12 @@ namespace _1670_API.Helpers
             catch (Exception e)
             {
                 Debug.WriteLine(e);
-                return null;
+                return null; // The token is invalid
             }
 
             AccountDTO accountDTO = new()
             {
-                Id = int.Parse(tokenContent.FindFirstValue(ClaimTypes.NameIdentifier)),
+                Id = int.Parse(tokenContent.FindFirstValue(ClaimTypes.NameIdentifier)), // The user's ID is stored in the token's NameIdentifier claim
                 Email = tokenContent.FindFirstValue(ClaimTypes.Email),
                 Role = tokenContent.FindFirstValue(ClaimTypes.Role),
             };

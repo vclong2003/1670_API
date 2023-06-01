@@ -9,6 +9,7 @@ namespace _1670_API.Data
         {
         }
 
+        // Tables
         public DbSet<Account> Accounts { get; set; } = null;
         public DbSet<CartItem> CartItems { get; set; } = null;
         public DbSet<Category> Categories { get; set; } = null;

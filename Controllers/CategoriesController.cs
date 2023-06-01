@@ -15,6 +15,8 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
+        // GET: /api/category
+        // Retrieves all categories
         [HttpGet]
         public async Task<ActionResult> Get()
         {
@@ -22,6 +24,8 @@ namespace _1670_API.Controllers
             return StatusCode(200, categories);
         }
 
+        // GET: /api/category/{id}
+        // Retrieves a category by id
         [HttpGet("{id}")]
         public async Task<ActionResult> GetOne(int id)
         {
@@ -30,6 +34,9 @@ namespace _1670_API.Controllers
             return StatusCode(200, result);
         }
 
+        // POST: /api/category
+        // Adds a new category
+        // Sample request body: {"name": "category name", "desctiption": "..."}
         [HttpPost]
         public async Task<ActionResult> Add(CategoryDTO categoryDTO)
         {
@@ -45,6 +52,9 @@ namespace _1670_API.Controllers
             return StatusCode(200, newCategory);
         }
 
+        // PUT: /api/category/{id}
+        // Updates a category
+        // Sample request body: {"name": "category name", "desctiption": "..."}
         [HttpPut("id")]
         public async Task<ActionResult> Update(int id, CategoryDTO categoryDTO)
         {
