@@ -14,6 +14,9 @@ namespace _1670_API.Controllers
         {
             _dataContext = dataContext;
         }
+
+        // POST: /api/staff
+        // Body parameters: name, phone, address, email, password
         [HttpPost]
         public async Task<ActionResult> CreateStaff(AddStaffDTO staffDTO)
         {
@@ -49,39 +52,39 @@ namespace _1670_API.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAllStaff()
         {
-            var result = await _dataContext.Staffs.ToListAsync();
+            var result = await _dataContext.Staffs.Include(s => s.Account).ToListAsync();
             return StatusCode(200, result);
         }
 
-        [HttpGet("id")]
-        public async Task<ActionResult> GetStaff(int id)
-        {
-            var result = await _dataContext.Staffs.Where(s => s.AccountId == id)
-                .Include(s => s.Account)
-                .Select(s => new
-                {
-                    id = s.Account.Id,
-                    name = s.Name,
-                    email = s.Account.Email,
-                    phone = s.Phone,
-                    address = s.Address,
+        //[HttpGet("id")]
+        //public async Task<ActionResult> GetStaff(int id)
+        //{
+        //    var result = await _dataContext.Staffs.Where(s => s.AccountId == id)
+        //        .Include(s => s.Account)
+        //        .Select(s => new
+        //        {
+        //            id = s.Account.Id,
+        //            name = s.Name,
+        //            email = s.Account.Email,
+        //            phone = s.Phone,
+        //            address = s.Address,
 
-                }).ToListAsync();
-            return StatusCode(200, result);
-        }
+        //        }).ToListAsync();
+        //    return StatusCode(200, result);
+        //}
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateStaff(StaffDTO staffDTO, int id)
         {
-            var staffInfor = await _dataContext.Staffs.FirstOrDefaultAsync(s=>s.AccountId==id);
+            var staffInfor = await _dataContext.Staffs.FirstOrDefaultAsync(s => s.Id == id);
 
-            staffInfor.Name = staffDTO.Name;
-            staffInfor.Phone = staffDTO.Phone;
-            staffInfor.Address = staffDTO.Address;
+            staffInfor.Name = staffDTO.Name ?? staffInfor.Name;
+            staffInfor.Phone = staffDTO.Phone ?? staffInfor.Phone;
+            staffInfor.Address = staffDTO.Address ?? staffInfor.Address;
 
             await _dataContext.SaveChangesAsync();
 
-            return StatusCode(200, "Update Successfully");
+            return StatusCode(200);
         }
     }
 }
