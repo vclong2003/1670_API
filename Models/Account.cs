@@ -11,8 +11,9 @@ namespace _1670_API.Models
         [RegularExpression("^(CUSTOMER|STAFF|MANAGER)$", ErrorMessage = "Invalid role")]
         public string Role { get; set; }
 
-        public ICollection<Order> Orders { get; } = new List<Order>();
-        public ICollection<CartItem> CartItems { get; } = new List<CartItem>();
+        // Navigation properties
+        public ICollection<Order> Orders { get; } = new List<Order>(); // CUSTOMER only
+        public ICollection<CartItem> CartItems { get; } = new List<CartItem>(); // Customer only
     }
 
     public class AccountDTO

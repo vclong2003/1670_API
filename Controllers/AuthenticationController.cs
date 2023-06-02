@@ -58,15 +58,13 @@ namespace _1670_API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login(AccountDTO accountDTO)
         {
-
             var account = await _dataContext.Accounts.FirstOrDefaultAsync(a => a.Email == accountDTO.Email);
-            if (account == null) { return StatusCode(404, "user-not-found"); }
+            if (account == null) { return StatusCode(404, "Aaccount not found!"); }
 
             bool passwordMatched = BCrypt.Net.BCrypt.Verify(accountDTO.Password, account.Password);
 
             if (passwordMatched)
             {
-
                 Response.Cookies.Append("token", JwtHandler.GenerateToken(account), new CookieOptions
                 {
                     Secure = true,
@@ -76,7 +74,7 @@ namespace _1670_API.Controllers
                 return StatusCode(200);
             }
 
-            return StatusCode(400, "validation-error");
+            return StatusCode(400, "Wrong password!");
         }
 
         // GET: /auth
