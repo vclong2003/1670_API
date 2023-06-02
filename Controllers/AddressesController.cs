@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
-    [Route("api/addresses")]
+    [Route("api/address")]
     [ApiController]
     public class AddressesController : ControllerBase
     {
@@ -29,18 +29,6 @@ namespace _1670_API.Controllers
 
             return StatusCode(200, addresses);
 
-        }
-
-        // GET: /api/addresses/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult> GetAddress(int id)
-        {
-            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
-            if (accountDTO.Role != "CUSTOMER") { return StatusCode(403, "Forbidden"); }
-
-            var address = await _dataContext.ShippingAddresses.Where(s => s.Id == id && s.CustomerId == accountDTO.Id).FirstOrDefaultAsync();
-            return StatusCode(200, address);
         }
 
         // POST: /api/addresses
