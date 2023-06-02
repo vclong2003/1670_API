@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace _1670_API.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class AddressCustomer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,6 +46,7 @@ namespace _1670_API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -55,6 +56,12 @@ namespace _1670_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShippingAddresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShippingAddresses_Accounts_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,14 +92,15 @@ namespace _1670_API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: true),
+                    ThumbnailUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Publisher = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PublishcationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    Stock = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -101,8 +109,7 @@ namespace _1670_API.Migrations
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -111,8 +118,9 @@ namespace _1670_API.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    ShippingAddressId = table.Column<int>(type: "int", nullable: false),
+                    ShippingAddressId = table.Column<int>(type: "int", nullable: true),
                     StaffId = table.Column<int>(type: "int", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShippingFee = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
@@ -128,8 +136,7 @@ namespace _1670_API.Migrations
                         name: "FK_Orders_ShippingAddresses_ShippingAddressId",
                         column: x => x.ShippingAddressId,
                         principalTable: "ShippingAddresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Orders_Staffs_StaffId",
                         column: x => x.StaffId,
@@ -216,6 +223,11 @@ namespace _1670_API.Migrations
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShippingAddresses_CustomerId",
+                table: "ShippingAddresses",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Staffs_AccountId",

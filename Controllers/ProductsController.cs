@@ -48,8 +48,7 @@ namespace _1670_API.Controllers
 
         // POST: /api/products
         // Adds a new product with the provided information
-        // Only MANAGER can add new products
-        // Sample request body: {"name": "product name", "price": 100, "description": "...", "categoryId": 1}
+        // Body parameters: name, price, description, categoryId
         [HttpPost]
         public async Task<ActionResult> AddProduct(ProductDTO productDTO)
         {
@@ -62,7 +61,6 @@ namespace _1670_API.Controllers
             };
 
             _dataContext.Products.Add(newProduct);
-
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, newProduct);
@@ -70,14 +68,13 @@ namespace _1670_API.Controllers
 
         // PUT: /api/products/{id}
         // Updates an existing product with the provided information
-        // Only MANAGER can update products
-        // Sample request body: {"name": "product name", "price": 100, "description": "...", "categoryId": 1}
+        // Body parameters: name, price, description, categoryId 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProduct(int id, ProductDTO productDTO)
         {
             var accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
-            if (accountDTO.Role != "MANAGER") { return StatusCode(403, "forbidden"); }
+            if (accountDTO.Role != "MANAGER") { return StatusCode(403, "Forbidden"); }
 
             var product = await _dataContext.Products.FindAsync(id);
             if (product == null) { return StatusCode(404, "product-not-found"); }

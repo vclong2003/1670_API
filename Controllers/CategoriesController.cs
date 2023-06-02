@@ -16,7 +16,6 @@ namespace _1670_API.Controllers
         }
 
         // GET: /api/category
-        // Retrieves all categories
         [HttpGet]
         public async Task<ActionResult> Get()
         {
@@ -25,7 +24,6 @@ namespace _1670_API.Controllers
         }
 
         // GET: /api/category/{id}
-        // Retrieves a category by id
         [HttpGet("{id}")]
         public async Task<ActionResult> GetOne(int id)
         {
@@ -35,8 +33,7 @@ namespace _1670_API.Controllers
         }
 
         // POST: /api/category
-        // Adds a new category
-        // Sample request body: {"name": "category name", "desctiption": "..."}
+        // Body parameters: name
         [HttpPost]
         public async Task<ActionResult> Add(CategoryDTO categoryDTO)
         {
@@ -53,16 +50,12 @@ namespace _1670_API.Controllers
         }
 
         // PUT: /api/category/{id}
-        // Updates a category
-        // Sample request body: {"name": "category name", "desctiption": "..."}
+        // Body parameters: name
         [HttpPut("id")]
         public async Task<ActionResult> Update(int id, CategoryDTO categoryDTO)
         {
             var category = await _dataContext.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return StatusCode(404, "category-not-found");
-            }
+            if (category == null) { return StatusCode(404, "category-not-found"); }
 
             category.Name = categoryDTO.Name;
 
