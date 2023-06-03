@@ -40,7 +40,7 @@ namespace _1670_API.Controllers
 
             return StatusCode(200, items);
         }
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult> GetOrderItems(string id)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
@@ -56,6 +56,7 @@ namespace _1670_API.Controllers
                     productName = o.Product.Name,
                     price = o.Product.Price,
                     quantity = o.Quantity,
+                    total = o.Product.Price * o.Quantity
                 })
                 .ToListAsync();
 
@@ -129,6 +130,31 @@ namespace _1670_API.Controllers
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, "Update Order Status Successfully");
+        }
+
+        //Get All Order Of The System
+        [HttpGet("all")]
+        public async Task<ActionResult> AllOrders()
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+            var orders = await _dataContext.Orders.Include(o=>o.ShippingAddress)
+                .Select(o => new
+                {
+                    id = o.Id,
+                    name = o.ShippingAddress.Name,
+                    phone = o.ShippingAddress.Phone,
+                    address = o.ShippingAddress.Address,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
+                    date = o.Date,
+                    shippingFee = o.ShippingFee,
+                })
+                .ToListAsync();
+            return StatusCode(200, orders);
         }
     }
 }
