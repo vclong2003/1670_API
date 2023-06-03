@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using _1670_API.Data;
+using _1670_API.Helpers;
+using _1670_API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
@@ -6,5 +10,125 @@ namespace _1670_API.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
+        private readonly DataContext _dataContext;
+
+        public OrderController(DataContext context)
+        {
+            _dataContext = context;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetOrders()
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null) { 
+                return StatusCode(401, "Unauthorized"); 
+            }
+
+            var items = await _dataContext.Orders.Where(o => o.CustomerId == accountDTO.Id).
+                Include(o => o.ShippingAddress)
+                .Select(o => new
+                {
+                   id = o.Id,
+                   name = o.ShippingAddress.Name,
+                   address = o.ShippingAddress.Address,
+                   phone = o.ShippingAddress.Phone,
+                   city = o.ShippingAddress.City,
+                   country = o.ShippingAddress.Country,
+                })
+                .ToListAsync();
+
+            return StatusCode(200, items);
+        }
+        [HttpGet("id")]
+        public async Task<ActionResult> GetOrderItems(string id)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+
+            var items = await _dataContext.OrderItems.Where(o => o.OrderId == id).
+                Include(o => o.Product)
+                .Select(o => new
+                {
+                    productName = o.Product.Name,
+                    price = o.Product.Price,
+                    quantity = o.Quantity,
+                })
+                .ToListAsync();
+
+            return StatusCode(200, items);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateOrder(int addressId, double shippingFee)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+            try
+            {
+                var guid = Guid.NewGuid().ToString();
+                Order order = new()
+                {
+                    Id = guid,
+                    CustomerId = (int)accountDTO.Id,
+                    ShippingAddressId = addressId,
+                    StaffId = null,
+                    Date = DateTime.Now,
+                    ShippingFee = shippingFee
+                };
+                _dataContext.Orders.Add(order);
+                await _dataContext.SaveChangesAsync();
+                var cartItems = _dataContext.CartItems.Where(a => a.CustomerId == accountDTO.Id).ToList();
+                foreach (var cartItem in cartItems)
+                {
+                    OrderItem item = new()
+                    {
+                        ProductId = cartItem.ProductId,
+                        OrderId = guid,
+                        Quantity = cartItem.Quantity,
+                    };
+
+                    _dataContext.OrderItems.Add(item);
+                    await _dataContext.SaveChangesAsync();
+                }
+                _dataContext.CartItems.
+                    RemoveRange(_dataContext.CartItems.
+                    Where(a => a.CustomerId == accountDTO.Id)
+                );
+                await _dataContext.SaveChangesAsync();
+                return StatusCode(200, "Create Order Successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(401, ex);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateOrderStatus(int id)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+
+            var order = await _dataContext.Orders.FindAsync(id);
+            order.StaffId = accountDTO.Id;//?? order model hasn't status => check order model please
+            //status isCompletd? code
+            //...
+            //other status? code
+            //...
+
+            await _dataContext.SaveChangesAsync();
+
+            return StatusCode(200, "Update Order Status Successfully");
+        }
     }
 }
