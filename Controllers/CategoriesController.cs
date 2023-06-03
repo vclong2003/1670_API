@@ -19,7 +19,7 @@ namespace _1670_API.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var categories = await _dataContext.Categories.Select(c => new { c.Id, c.Name }).ToListAsync();
+            var categories = await _dataContext.Categories.ToListAsync();
             return StatusCode(200, categories);
         }
 
@@ -40,6 +40,7 @@ namespace _1670_API.Controllers
             Category newCategory = new()
             {
                 Name = categoryDTO.Name,
+                Description = categoryDTO.Description,
             };
 
             _dataContext.Categories.Add(newCategory);
@@ -58,10 +59,13 @@ namespace _1670_API.Controllers
             if (category == null) { return StatusCode(404, "category-not-found"); }
 
             category.Name = categoryDTO.Name;
+            category.Description = categoryDTO.Description;
 
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, category);
         }
+
+
     }
 }
