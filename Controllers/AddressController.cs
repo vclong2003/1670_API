@@ -8,11 +8,11 @@ namespace _1670_API.Controllers
 {
     [Route("api/address")]
     [ApiController]
-    public class AddressesController : ControllerBase
+    public class AddressController : ControllerBase
     {
         private readonly DataContext _dataContext;
 
-        public AddressesController(DataContext context)
+        public AddressController(DataContext context)
         {
             _dataContext = context;
         }

@@ -31,7 +31,7 @@ namespace _1670_API.Controllers
             if (limit != null) { query = query.Take((int)limit); }
 
             // Execute the query and retrieve products
-            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author }).ToListAsync();
+            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author, p.Publisher, p.PublishcationDate }).ToListAsync();
 
             return StatusCode(200, products);
         }
@@ -48,7 +48,7 @@ namespace _1670_API.Controllers
 
         // POST: /api/products
         // Adds a new product with the provided information
-        // Body parameters: name, price, description, categoryId
+        // Body parameters: name, price, description, categoryId, author, publisher, thumbnailUrl, publishcationDate, quantity
         [HttpPost]
         public async Task<ActionResult> AddProduct(ProductDTO productDTO)
         {
@@ -57,7 +57,13 @@ namespace _1670_API.Controllers
                 Name = productDTO.Name,
                 Price = (double)productDTO.Price,
                 Description = productDTO.Description,
-                CategoryId = productDTO.CategoryId
+                CategoryId = productDTO.CategoryId,
+                Author = productDTO.Author,
+                Publisher = productDTO.Publisher,
+                ThumbnailUrl = productDTO.ThumbnailUrl,
+                PublishcationDate = (DateTime)productDTO.PublishcationDate,
+                Quantity = (int)productDTO.Quantity,
+
             };
 
             _dataContext.Products.Add(newProduct);
