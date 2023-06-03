@@ -31,7 +31,7 @@ namespace _1670_API.Controllers
             if (limit != null) { query = query.Take((int)limit); }
 
             // Execute the query and retrieve products
-            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author, p.Publisher, p.PublishcationDate }).ToListAsync();
+            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author, p.Publisher, p.PublishcationDate, p.Quantity }).ToListAsync();
 
             return StatusCode(200, products);
         }
@@ -89,6 +89,11 @@ namespace _1670_API.Controllers
             product.Price = productDTO.Price ?? product.Price;
             product.Description = productDTO.Description ?? product.Description;
             product.CategoryId = productDTO.CategoryId ?? product.CategoryId;
+            product.Quantity = productDTO.Quantity ?? product.Quantity;
+            product.Author = productDTO.Author ?? product.Author;
+            product.Publisher = productDTO.Publisher ?? product.Publisher;
+            product.ThumbnailUrl = productDTO.ThumbnailUrl ?? product.ThumbnailUrl;
+            product.PublishcationDate = productDTO.PublishcationDate ?? product.PublishcationDate;
 
             await _dataContext.SaveChangesAsync();
 
