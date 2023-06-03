@@ -16,21 +16,22 @@ namespace _1670_API.Controllers
             _dataContext = dataContext;
         }
 
-        // GET: /api/products
+        // GET: /api/product/?category={categoryId}&search={searchValue}&skip={skip}&limit={limit}
         // Retrieves products based on optional categoryId and searchValue parameters
         [HttpGet]
         public async Task<ActionResult> GetProducts([FromQuery] int? category = null, [FromQuery] string? search = null, [FromQuery] int? skip = null, [FromQuery] int? limit = null)
         {
+            // Create a query to retrieve products
             IQueryable<Product> query = _dataContext.Products;
 
             // Apply filters if they are provided
             if (category != null) { query = query.Where(p => p.CategoryId == category); }
-            if (search != null) { query = query.Where(p => p.Name.Contains(search) || p.Author.Contains(search)); }
+            if (search != null) { query = query.Where(p => p.Name.Contains(search) || p.Author.Contains(search)); } // Search by name or author
             if (skip != null) { query = query.Skip((int)skip); }
             if (limit != null) { query = query.Take((int)limit); }
 
-            // Select some properties and retrieve products
-            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author }).ToListAsync();
+            // Execute the query and retrieve products
+            var products = await query.Select(p => new { p.Id, p.Name, p.Price, p.ThumbnailUrl, p.Author, p.Publisher, p.PublishcationDate, p.Quantity }).ToListAsync();
 
             return StatusCode(200, products);
         }
@@ -41,12 +42,13 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> GetProduct(int id)
         {
             var product = await _dataContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (product == null) { return StatusCode(404, "product-not-found"); }
+            if (product == null) { return StatusCode(404, "Product not found!"); }
             return StatusCode(200, product);
         }
 
         // POST: /api/products
         // Adds a new product with the provided information
+        // Body parameters: name, price, description, categoryId, author, publisher, thumbnailUrl, publishcationDate, quantity
         [HttpPost]
         public async Task<ActionResult> AddProduct(ProductDTO productDTO)
         {
@@ -55,11 +57,16 @@ namespace _1670_API.Controllers
                 Name = productDTO.Name,
                 Price = (double)productDTO.Price,
                 Description = productDTO.Description,
-                CategoryId = productDTO.CategoryId
+                CategoryId = productDTO.CategoryId,
+                Author = productDTO.Author,
+                Publisher = productDTO.Publisher,
+                ThumbnailUrl = productDTO.ThumbnailUrl,
+                PublishcationDate = (DateTime)productDTO.PublishcationDate,
+                Quantity = (int)productDTO.Quantity,
+
             };
 
             _dataContext.Products.Add(newProduct);
-
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, newProduct);
@@ -67,20 +74,26 @@ namespace _1670_API.Controllers
 
         // PUT: /api/products/{id}
         // Updates an existing product with the provided information
+        // Body parameters: name, price, description, categoryId 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProduct(int id, ProductDTO productDTO)
         {
             var accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null) { return StatusCode(401, "unauthorized"); }
-            if (accountDTO.Role != "MANAGER") { return StatusCode(403, "forbidden"); }
+            if (accountDTO.Role != "MANAGER") { return StatusCode(403, "Forbidden"); }
 
             var product = await _dataContext.Products.FindAsync(id);
             if (product == null) { return StatusCode(404, "product-not-found"); }
 
-            product.Name = productDTO.Name ?? product.Name;
+            product.Name = productDTO.Name ?? product.Name; // If productDTO.Name is null, product.Name will not be updated
             product.Price = productDTO.Price ?? product.Price;
             product.Description = productDTO.Description ?? product.Description;
             product.CategoryId = productDTO.CategoryId ?? product.CategoryId;
+            product.Quantity = productDTO.Quantity ?? product.Quantity;
+            product.Author = productDTO.Author ?? product.Author;
+            product.Publisher = productDTO.Publisher ?? product.Publisher;
+            product.ThumbnailUrl = productDTO.ThumbnailUrl ?? product.ThumbnailUrl;
+            product.PublishcationDate = productDTO.PublishcationDate ?? product.PublishcationDate;
 
             await _dataContext.SaveChangesAsync();
 

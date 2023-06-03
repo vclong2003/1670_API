@@ -7,8 +7,9 @@
         public int CustomerId { get; set; }
         public Account Customer { get; set; }
 
-        public int ShippingAddressId { get; set; }
-        public ShippingAddress ShippingAddress { get; set; }
+        // Nullable: when delete address, the order still exists
+        public int? ShippingAddressId { get; set; }
+        public ShippingAddress? ShippingAddress { get; set; }
 
         public int? StaffId { get; set; }
         public Staff? Staff { get; set; }

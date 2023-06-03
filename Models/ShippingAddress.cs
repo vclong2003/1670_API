@@ -4,6 +4,9 @@
     {
         public int Id { get; set; }
 
+        public int CustomerId { get; set; }
+        public Account Customer { get; set; }
+
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
@@ -14,6 +17,9 @@
     public class ShippingAddressDTO
     {
         public int? Id { get; set; }
+
+        public int? CustomerId { get; set; }
+
         public string? Name { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }

@@ -12,8 +12,8 @@ using _1670_API.Data;
 namespace _1670_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230525160400_init")]
-    partial class init
+    [Migration("20230602104454_AddressCustomer")]
+    partial class AddressCustomer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,7 +92,10 @@ namespace _1670_API.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ShippingAddressId")
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ShippingAddressId")
                         .HasColumnType("int");
 
                     b.Property<double>("ShippingFee")
@@ -141,7 +144,7 @@ namespace _1670_API.Migrations
                     b.Property<string>("Author")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -159,8 +162,11 @@ namespace _1670_API.Migrations
                     b.Property<string>("Publisher")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Stock")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -186,6 +192,9 @@ namespace _1670_API.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -193,6 +202,8 @@ namespace _1670_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("ShippingAddresses");
                 });
@@ -227,7 +238,7 @@ namespace _1670_API.Migrations
             modelBuilder.Entity("_1670_API.Models.CartItem", b =>
                 {
                     b.HasOne("_1670_API.Models.Account", "Customer")
-                        .WithMany("CartItems")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -246,16 +257,14 @@ namespace _1670_API.Migrations
             modelBuilder.Entity("_1670_API.Models.Order", b =>
                 {
                     b.HasOne("_1670_API.Models.Account", "Customer")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("_1670_API.Models.ShippingAddress", "ShippingAddress")
                         .WithMany()
-                        .HasForeignKey("ShippingAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingAddressId");
 
                     b.HasOne("_1670_API.Models.Staff", "Staff")
                         .WithMany("Orders")
@@ -291,11 +300,20 @@ namespace _1670_API.Migrations
                 {
                     b.HasOne("_1670_API.Models.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("_1670_API.Models.ShippingAddress", b =>
+                {
+                    b.HasOne("_1670_API.Models.Account", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("_1670_API.Models.Staff", b =>
@@ -307,13 +325,6 @@ namespace _1670_API.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("_1670_API.Models.Account", b =>
-                {
-                    b.Navigation("CartItems");
-
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("_1670_API.Models.Category", b =>
