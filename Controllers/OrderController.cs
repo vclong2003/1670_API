@@ -21,20 +21,21 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> GetOrders()
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null) { 
-                return StatusCode(401, "Unauthorized"); 
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
             }
 
             var items = await _dataContext.Orders.Where(o => o.CustomerId == accountDTO.Id).
                 Include(o => o.ShippingAddress)
                 .Select(o => new
                 {
-                   id = o.Id,
-                   name = o.ShippingAddress.Name,
-                   address = o.ShippingAddress.Address,
-                   phone = o.ShippingAddress.Phone,
-                   city = o.ShippingAddress.City,
-                   country = o.ShippingAddress.Country,
+                    id = o.Id,
+                    name = o.ShippingAddress.Name,
+                    address = o.ShippingAddress.Address,
+                    phone = o.ShippingAddress.Phone,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
                 })
                 .ToListAsync();
 
@@ -64,13 +65,14 @@ namespace _1670_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateOrder(int addressId, double shippingFee)
+        public async Task<ActionResult> CreateOrder(OrderDTO orderDTO)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null)
-            {
-                return StatusCode(401, "Unauthorized");
-            }
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
+            if (accountDTO.Role != "CUSTOMER") { return StatusCode(401, "Unauthorized"); }
+
+
+
             try
             {
                 var guid = Guid.NewGuid().ToString();
@@ -141,7 +143,7 @@ namespace _1670_API.Controllers
             {
                 return StatusCode(401, "Unauthorized");
             }
-            var orders = await _dataContext.Orders.Include(o=>o.ShippingAddress)
+            var orders = await _dataContext.Orders.Include(o => o.ShippingAddress)
                 .Select(o => new
                 {
                     id = o.Id,

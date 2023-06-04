@@ -16,7 +16,7 @@
 
         public DateTime Date { get; set; }
 
-        public double ShippingFee { get; set; }
+        public string ShippingMethod { get; set; }
 
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
     }
@@ -28,6 +28,6 @@
         public int? ShippingAddressId { get; set; }
         public int? StaffId { get; set; }
         public DateTime? Date { get; set; }
-        public double? ShippingFee { get; set; }
+        public string? ShippingMethod { get; set; }
     }
 }
