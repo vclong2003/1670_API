@@ -1,10 +1,4 @@
-﻿using _1670_API.Data;
-using _1670_API.Helpers;
-using _1670_API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-namespace _1670_API.Controllers
+﻿namespace _1670_API.Controllers
 {
     [Route("api/order")]
     [ApiController]
@@ -121,56 +115,56 @@ namespace _1670_API.Controllers
             return StatusCode(200, newOrder.Id);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult> UpdateOrderStatus(string id, OrderStatusDTO orderStatus)
-        //{
-        //    AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-        //    if (accountDTO == null)
-        //    {
-        //        return StatusCode(401, "Unauthorized");
-        //    }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateOrderStatus(string id, OrderStatusDTO orderStatus)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
 
-        //    var order = await _dataContext.Orders.FindAsync(id);
-        //    order.StaffId = accountDTO.Id;
-        //    order.Status = orderStatus.Status;
-        //    if (orderStatus.Status == "Completed")
-        //    {
-        //        var orderItems = _dataContext.OrderItems.Where(oi => oi.OrderId == id).ToList();
-        //        foreach (var item in orderItems)
-        //        {
-        //            var product = await _dataContext.Products.FindAsync(item.ProductId);
-        //            product.Quantity = product.Quantity - item.Quantity;
-        //            await _dataContext.SaveChangesAsync();
-        //        }
-        //    }
-        //    await _dataContext.SaveChangesAsync();
+            var order = await _dataContext.Orders.FindAsync(id);
+            order.StaffId = accountDTO.Id;
+            order.Status = orderStatus.Status;
+            if (orderStatus.Status == "Completed")
+            {
+                var orderItems = _dataContext.OrderItems.Where(oi => oi.OrderId == id).ToList();
+                foreach (var item in orderItems)
+                {
+                    var product = await _dataContext.Products.FindAsync(item.ProductId);
+                    product.Quantity = product.Quantity - item.Quantity;
+                    await _dataContext.SaveChangesAsync();
+                }
+            }
+            await _dataContext.SaveChangesAsync();
 
-        //    return StatusCode(200, "Update Order Status Successfully");
-        //}
+            return StatusCode(200, "Update Order Status Successfully");
+        }
 
-        //[HttpGet("all")]
-        //public async Task<ActionResult> AllOrders()
-        //{
-        //    AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-        //    if (accountDTO == null)
-        //    {
-        //        return StatusCode(401, "Unauthorized");
-        //    }
-        //    var orders = await _dataContext.Orders.Include(o => o.ShippingAddress)
-        //        .Select(o => new
-        //        {
-        //            id = o.Id,
-        //            name = o.ShippingAddress.Name,
-        //            phone = o.ShippingAddress.Phone,
-        //            address = o.ShippingAddress.Address,
-        //            city = o.ShippingAddress.City,
-        //            country = o.ShippingAddress.Country,
-        //            date = o.Date,
-        //            shippingFee = o.ShippingFee,
-        //            status = o.Status,
-        //        })
-        //        .ToListAsync();
-        //    return StatusCode(200, orders);
-        //}
+        [HttpGet("all")]
+        public async Task<ActionResult> AllOrders()
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null)
+            {
+                return StatusCode(401, "Unauthorized");
+            }
+            var orders = await _dataContext.Orders.Include(o => o.ShippingAddress)
+                .Select(o => new
+                {
+                    id = o.Id,
+                    name = o.ShippingAddress.Name,
+                    phone = o.ShippingAddress.Phone,
+                    address = o.ShippingAddress.Address,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
+                    date = o.Date,
+                    paymentMethod = o.PaymentMethod,
+                    status = o.Status,
+                })
+                .ToListAsync();
+            return StatusCode(200, orders);
+        }
     }
 }
