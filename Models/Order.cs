@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace _1670_API.Models
 {
@@ -19,8 +20,10 @@ namespace _1670_API.Models
 
         public DateTime Date { get; set; }
 
+        [RegularExpression(@"^(Bank transfer|Pay when received)$")]
         public string PaymentMethod { get; set; }
 
+        [RegularExpression(@"^(Pending|Processing|Delivering|Delivered|Cancelled)$")]
         public string Status { get; set; }
 
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();

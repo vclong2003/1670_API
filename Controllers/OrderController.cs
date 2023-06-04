@@ -1,4 +1,10 @@
-﻿namespace _1670_API.Controllers
+﻿using _1670_API.Data;
+using _1670_API.Helpers;
+using _1670_API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace _1670_API.Controllers
 {
     [Route("api/order")]
     [ApiController]
@@ -14,12 +20,13 @@
         // GET: api/order
         // return all orders of the current customer
         [HttpGet]
-        public async Task<ActionResult> GetOrders()
+        public async Task<ActionResult> GetCustomerOrders()
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
-            var items = await _dataContext.Orders.Where(o => o.CustomerId == accountDTO.Id)
+            var items = await _dataContext.Orders
+                .Where(o => o.CustomerId == accountDTO.Id)
                 .Include(o => o.ShippingAddress)
                 .Select(o => new
                 {
@@ -54,6 +61,7 @@
                     id = o.Id,
                     date = o.Date,
                     status = o.Status,
+                    paymentMethod = o.PaymentMethod,
                     name = o.ShippingAddress.Name,
                     phone = o.ShippingAddress.Phone,
                     address = o.ShippingAddress.Address,
@@ -143,28 +151,28 @@
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult> AllOrders()
+        public async Task<ActionResult> GetAllOrders()
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-            if (accountDTO == null)
-            {
-                return StatusCode(401, "Unauthorized");
-            }
-            var orders = await _dataContext.Orders.Include(o => o.ShippingAddress)
-                .Select(o => new
-                {
-                    id = o.Id,
-                    name = o.ShippingAddress.Name,
-                    phone = o.ShippingAddress.Phone,
-                    address = o.ShippingAddress.Address,
-                    city = o.ShippingAddress.City,
-                    country = o.ShippingAddress.Country,
-                    date = o.Date,
-                    paymentMethod = o.PaymentMethod,
-                    status = o.Status,
-                })
-                .ToListAsync();
-            return StatusCode(200, orders);
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
+
+            var items = await _dataContext.Orders
+               .Include(o => o.ShippingAddress)
+               .Select(o => new
+               {
+                   id = o.Id,
+                   date = o.Date,
+                   status = o.Status,
+                   paymentMethod = o.PaymentMethod,
+                   name = o.ShippingAddress.Name,
+                   phone = o.ShippingAddress.Phone,
+                   address = o.ShippingAddress.Address,
+                   city = o.ShippingAddress.City,
+                   country = o.ShippingAddress.Country,
+               })
+               .ToListAsync();
+
+            return StatusCode(200, items);
         }
     }
 }
