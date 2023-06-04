@@ -19,6 +19,8 @@
         public string ShippingMethod { get; set; }
 
         public ICollection<OrderItem> Items { get; } = new List<OrderItem>();
+
+        public string? Status { get; set; }
     }
 
     public class OrderDTO
@@ -29,5 +31,11 @@
         public int? StaffId { get; set; }
         public DateTime? Date { get; set; }
         public string? ShippingMethod { get; set; }
+    }
+
+    public class OrderStatusDTO
+    {
+        public string? Id { get; set; }
+        public string? Status { get; set; }
     }
 }
