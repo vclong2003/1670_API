@@ -71,47 +71,36 @@ namespace _1670_API.Controllers
             if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
             if (accountDTO.Role != "CUSTOMER") { return StatusCode(401, "Unauthorized"); }
 
+            var cartItems = _dataContext.CartItems.Where(a => a.CustomerId == accountDTO.Id).ToList();
+            if (cartItems.Count == 0) { return StatusCode(400, "Cart is empty!"); }
 
-
-            try
+            var newOrderId = Guid.NewGuid().ToString();
+            Order order = new()
             {
-                var guid = Guid.NewGuid().ToString();
-                Order order = new()
+                Id = newOrderId,
+                CustomerId = (int)accountDTO.Id,
+                ShippingAddressId = orderDTO.ShippingAddressId,
+                StaffId = null,
+                Date = DateTime.Now,
+                ShippingMethod = orderDTO.ShippingMethod,
+                Status = "Pending"
+            };
+            _dataContext.Orders.Add(order);
+
+            cartItems.ForEach(cartItems =>
+            {
+                OrderItem item = new()
                 {
-                    Id = guid,
-                    CustomerId = (int)accountDTO.Id,
-                    ShippingAddressId = addressId,
-                    StaffId = null,
-                    Date = DateTime.Now,
-                    ShippingFee = shippingFee,
-                    Status = "Pending"
+                    ProductId = cartItems.ProductId,
+                    OrderId = newOrderId,
+                    Quantity = cartItems.Quantity,
                 };
-                _dataContext.Orders.Add(order);
-                await _dataContext.SaveChangesAsync();
-                var cartItems = _dataContext.CartItems.Where(a => a.CustomerId == accountDTO.Id).ToList();
-                foreach (var cartItem in cartItems)
-                {
-                    OrderItem item = new()
-                    {
-                        ProductId = cartItem.ProductId,
-                        OrderId = guid,
-                        Quantity = cartItem.Quantity,
-                    };
+                _dataContext.OrderItems.Add(item);
+            });
+            _dataContext.CartItems.RemoveRange(cartItems);
 
-                    _dataContext.OrderItems.Add(item);
-                    await _dataContext.SaveChangesAsync();
-                }
-                _dataContext.CartItems.
-                    RemoveRange(_dataContext.CartItems.
-                    Where(a => a.CustomerId == accountDTO.Id)
-                );
-                await _dataContext.SaveChangesAsync();
-                return StatusCode(200, "Create Order Successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(401, ex);
-            }
+            await _dataContext.SaveChangesAsync();
+            return StatusCode(200);
         }
 
         [HttpPut("{id}")]
@@ -128,7 +117,7 @@ namespace _1670_API.Controllers
             order.Status = orderStatus.Status;
             if (orderStatus.Status == "Completed")
             {
-                var orderItems = _dataContext.OrderItems.Where(oi=> oi.OrderId == id).ToList();
+                var orderItems = _dataContext.OrderItems.Where(oi => oi.OrderId == id).ToList();
                 foreach (var item in orderItems)
                 {
                     var product = await _dataContext.Products.FindAsync(item.ProductId);
