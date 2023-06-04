@@ -41,6 +41,7 @@ namespace _1670_API.Controllers
 
             return StatusCode(200, items);
         }
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetOrderItems(string id)
         {
@@ -64,6 +65,9 @@ namespace _1670_API.Controllers
             return StatusCode(200, items);
         }
 
+        // POST: api/order
+        // body params: shippingAddressId, shippingMethod
+        // return id of the new order
         [HttpPost]
         public async Task<ActionResult> CreateOrder(OrderDTO orderDTO)
         {
@@ -75,7 +79,7 @@ namespace _1670_API.Controllers
             if (cartItems.Count == 0) { return StatusCode(400, "Cart is empty!"); }
 
             var newOrderId = Guid.NewGuid().ToString();
-            Order order = new()
+            Order newOrder = new()
             {
                 Id = newOrderId,
                 CustomerId = (int)accountDTO.Id,
@@ -85,7 +89,7 @@ namespace _1670_API.Controllers
                 ShippingMethod = orderDTO.ShippingMethod,
                 Status = "Pending"
             };
-            _dataContext.Orders.Add(order);
+            _dataContext.Orders.Add(newOrder);
 
             cartItems.ForEach(cartItems =>
             {
@@ -100,7 +104,8 @@ namespace _1670_API.Controllers
             _dataContext.CartItems.RemoveRange(cartItems);
 
             await _dataContext.SaveChangesAsync();
-            return StatusCode(200);
+
+            return StatusCode(200, newOrder.Id);
         }
 
         [HttpPut("{id}")]

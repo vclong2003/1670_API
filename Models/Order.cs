@@ -16,7 +16,7 @@
 
         public DateTime Date { get; set; }
 
-        public string ShippingMethod { get; set; }
+        public string PaymentMethod { get; set; }
 
         public string Status { get; set; }
 
@@ -32,7 +32,7 @@
         public int? ShippingAddressId { get; set; }
         public int? StaffId { get; set; }
         public DateTime? Date { get; set; }
-        public string? ShippingMethod { get; set; }
+        public string? PaymentMethod { get; set; }
         public string? Status { get; set; }
     }
 
