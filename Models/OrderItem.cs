@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace _1670_API.Models
 {
@@ -9,6 +10,7 @@ namespace _1670_API.Models
         public Product Product { get; set; }
 
         public string OrderId { get; set; }
+        [JsonIgnore]
         public Order Order { get; set; }
 
         public int Quantity { get; set; }

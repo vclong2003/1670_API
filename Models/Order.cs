@@ -1,4 +1,6 @@
-﻿namespace _1670_API.Models
+﻿using System.Text.Json.Serialization;
+
+namespace _1670_API.Models
 {
     public class Order
     {
@@ -12,6 +14,7 @@
         public ShippingAddress? ShippingAddress { get; set; }
 
         public int? StaffId { get; set; }
+        [JsonIgnore]
         public Staff? Staff { get; set; }
 
         public DateTime Date { get; set; }

@@ -2,6 +2,7 @@
 using _1670_API.Helpers;
 using _1670_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace _1670_API.Controllers
 {
@@ -16,53 +17,66 @@ namespace _1670_API.Controllers
             _dataContext = context;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult> GetOrders()
-        //{
-        //    AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-        //    if (accountDTO == null)
-        //    {
-        //        return StatusCode(401, "Unauthorized");
-        //    }
+        // GET: api/order
+        // return all orders of the current customer
+        [HttpGet]
+        public async Task<ActionResult> GetOrders()
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
-        //    var items = await _dataContext.Orders.Where(o => o.CustomerId == accountDTO.Id).
-        //        Include(o => o.ShippingAddress)
-        //        .Select(o => new
-        //        {
-        //            id = o.Id,
-        //            name = o.ShippingAddress.Name,
-        //            address = o.ShippingAddress.Address,
-        //            phone = o.ShippingAddress.Phone,
-        //            city = o.ShippingAddress.City,
-        //            country = o.ShippingAddress.Country,
-        //        })
-        //        .ToListAsync();
+            var items = await _dataContext.Orders.Where(o => o.CustomerId == accountDTO.Id)
+                .Include(o => o.ShippingAddress)
+                .Select(o => new
+                {
+                    id = o.Id,
+                    date = o.Date,
+                    status = o.Status,
+                    name = o.ShippingAddress.Name,
+                    phone = o.ShippingAddress.Phone,
+                    address = o.ShippingAddress.Address,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
+                })
+                .ToListAsync();
 
-        //    return StatusCode(200, items);
-        //}
+            return StatusCode(200, items);
+        }
 
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult> GetOrderItems(string id)
-        //{
-        //    AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-        //    if (accountDTO == null)
-        //    {
-        //        return StatusCode(401, "Unauthorized");
-        //    }
+        // GET: api/order/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetOrderItems(string id)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
-        //    var items = await _dataContext.OrderItems.Where(o => o.OrderId == id).
-        //        Include(o => o.Product)
-        //        .Select(o => new
-        //        {
-        //            productName = o.Product.Name,
-        //            price = o.Product.Price,
-        //            quantity = o.Quantity,
-        //            total = o.Product.Price * o.Quantity
-        //        })
-        //        .ToListAsync();
+            var order = await _dataContext.Orders
+                .Where(o => o.Id == id)
+                .Include(o => o.ShippingAddress)
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+                .Select(o => new
+                {
+                    id = o.Id,
+                    date = o.Date,
+                    status = o.Status,
+                    name = o.ShippingAddress.Name,
+                    phone = o.ShippingAddress.Phone,
+                    address = o.ShippingAddress.Address,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
+                    items = o.Items.Select(i => new
+                    {
+                        id = i.ProductId,
+                        name = i.Product.Name,
+                        price = i.Product.Price,
+                        quantity = i.Quantity,
+                    })
+                })
+                .FirstOrDefaultAsync();
 
-        //    return StatusCode(200, items);
-        //}
+            return StatusCode(200, order);
+        }
 
         // POST: api/order
         // body params: shippingAddressId, paymentMethod
