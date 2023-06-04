@@ -81,7 +81,8 @@ namespace _1670_API.Controllers
                     ShippingAddressId = addressId,
                     StaffId = null,
                     Date = DateTime.Now,
-                    ShippingFee = shippingFee
+                    ShippingFee = shippingFee,
+                    Status = "Pending"
                 };
                 _dataContext.Orders.Add(order);
                 await _dataContext.SaveChangesAsync();
@@ -112,7 +113,7 @@ namespace _1670_API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateOrderStatus(int id)
+        public async Task<ActionResult> UpdateOrderStatus(string id, OrderStatusDTO orderStatus)
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null)
@@ -121,12 +122,18 @@ namespace _1670_API.Controllers
             }
 
             var order = await _dataContext.Orders.FindAsync(id);
-            order.StaffId = accountDTO.Id;//?? order model hasn't status => check order model please
-            //status isCompletd? code
-            //...
-            //other status? code
-            //...
-
+            order.StaffId = accountDTO.Id;
+            order.Status = orderStatus.Status;
+            if (orderStatus.Status == "Completed")
+            {
+                var orderItems = _dataContext.OrderItems.Where(oi=> oi.OrderId == id).ToList();
+                foreach (var item in orderItems)
+                {
+                    var product = await _dataContext.Products.FindAsync(item.ProductId);
+                    product.Quantity = product.Quantity - item.Quantity;
+                    await _dataContext.SaveChangesAsync();
+                }
+            }
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, "Update Order Status Successfully");
@@ -152,6 +159,7 @@ namespace _1670_API.Controllers
                     country = o.ShippingAddress.Country,
                     date = o.Date,
                     shippingFee = o.ShippingFee,
+                    status = o.Status,
                 })
                 .ToListAsync();
             return StatusCode(200, orders);
