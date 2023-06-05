@@ -7,10 +7,10 @@ namespace _1670_API.Controllers
 {
     [Route("api/category")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoryController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        public CategoriesController(DataContext dataContext)
+        public CategoryController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }

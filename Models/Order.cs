@@ -41,10 +41,4 @@ namespace _1670_API.Models
         public string? PaymentMethod { get; set; }
         public string? Status { get; set; }
     }
-
-    public class OrderStatusDTO
-    {
-        public string? Id { get; set; }
-        public string? Status { get; set; }
-    }
 }

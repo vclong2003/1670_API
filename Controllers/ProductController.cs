@@ -8,10 +8,10 @@ namespace _1670_API.Controllers
 {
     [Route("api/product")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        public ProductsController(DataContext dataContext)
+        public ProductController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
