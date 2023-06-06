@@ -65,7 +65,5 @@ namespace _1670_API.Controllers
 
             return StatusCode(200, category);
         }
-
-
     }
 }
