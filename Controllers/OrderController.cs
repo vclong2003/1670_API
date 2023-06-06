@@ -72,50 +72,50 @@ namespace _1670_API.Controllers
             return StatusCode(200, items);
         }
 
-        //// GET: api/order/{id}
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult> GetOrderItems(string id)
-        //{
-        //    AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
-        //    if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
+        // GET: api/order/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetOrderItems(string id)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
 
-        //    IQueryable<Order> query = _dataContext.Orders
-        //        .Where(o => o.Id == id)
-        //        .Include(o => o.ShippingAddress)
-        //        .Include(o => o.Items)
-        //        .ThenInclude(i => i.Product);
+            IQueryable<Order> query = _dataContext.Orders
+                .Where(o => o.Id == id)
+                .Include(o => o.ShippingAddress)
+                .Include(o => o.Items)
+                .ThenInclude(i => i.Product);
 
-        //    if (accountDTO.Role == "MANAGER")
-        //    {
-        //        query.Include(o => o.Staff);
-        //    }
+            if (accountDTO.Role == "MANAGER") { query.Include(o => o.Staff); }
 
-        //    // modifying ...
+            var order = await query
+                .Select(o => new
+                {
+                    id = o.Id,
+                    date = o.Date,
+                    status = o.Status,
+                    paymentMethod = o.PaymentMethod,
+                    name = o.ShippingAddress.Name,
+                    phone = o.ShippingAddress.Phone,
+                    address = o.ShippingAddress.Address,
+                    city = o.ShippingAddress.City,
+                    country = o.ShippingAddress.Country,
+                    items = o.Items.Select(i => new
+                    {
+                        id = i.ProductId,
+                        name = i.Product.Name,
+                        price = i.Product.Price,
+                        quantity = i.Quantity,
+                    }),
+                    staff = (o.Staff == null) ? null : new
+                    {
+                        name = o.Staff.Name,
+                        phone = o.Staff.Phone,
+                    }
+                })
+                .FirstOrDefaultAsync();
 
-        //    var order = await query
-        //        .Select(o => new
-        //        {
-        //            id = o.Id,
-        //            date = o.Date,
-        //            status = o.Status,
-        //            paymentMethod = o.PaymentMethod,
-        //            name = o.ShippingAddress.Name,
-        //            phone = o.ShippingAddress.Phone,
-        //            address = o.ShippingAddress.Address,
-        //            city = o.ShippingAddress.City,
-        //            country = o.ShippingAddress.Country,
-        //            items = o.Items.Select(i => new
-        //            {
-        //                id = i.ProductId,
-        //                name = i.Product.Name,
-        //                price = i.Product.Price,
-        //                quantity = i.Quantity,
-        //            })
-        //        })
-        //        .FirstOrDefaultAsync();
-
-        //    return StatusCode(200, order);
-        //}
+            return StatusCode(200, order);
+        }
 
         // POST: api/order
         // body params: shippingAddressId, paymentMethod
@@ -171,13 +171,20 @@ namespace _1670_API.Controllers
             if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
             if (accountDTO.Role != "STAFF") { return StatusCode(401, "Unauthorized"); }
 
+
+
             var order = await _dataContext.Orders
                 .Where(o => o.Id == id)
                 .Include(o => o.Items)
                 .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync();
 
-            if (order.StaffId == null) { order.StaffId = accountDTO.Id; } // Only first staff can take the order ¬_¬
+            if (order.StaffId == null) // Only first staff can take the order ¬_¬
+            {
+                var staff = await _dataContext.Staffs.Where(s => s.AccountId == accountDTO.Id).FirstOrDefaultAsync();
+                order.StaffId = staff.Id;
+            }
+
             order.Status = orderDTO.Status;
 
             if (order.Status == "Delivered")
