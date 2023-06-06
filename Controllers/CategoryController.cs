@@ -52,7 +52,7 @@ namespace _1670_API.Controllers
 
         // PUT: /api/category/{id}
         // Body parameters: name
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, CategoryDTO categoryDTO)
         {
             var category = await _dataContext.Categories.FindAsync(id);
