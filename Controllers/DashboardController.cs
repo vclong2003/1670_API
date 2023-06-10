@@ -35,7 +35,6 @@ namespace _1670_API.Controllers
             {
                 List<object> results = new List<object>();
                 _ExecuteStatisticNumber(results, "Delivering");
-                _ExecuteStatisticNumber(results, "Cancelled");
                 return StatusCode(200, results);
             }
             else
@@ -59,9 +58,9 @@ namespace _1670_API.Controllers
             {
                 var r = new
                 {
-                    month = sdr.GetValue(0),
-                    revenue = sdr.GetValue(1),
-                    status = sdr.GetValue(2)
+                    month = sdr.GetValue(0).ToString(),
+                    revenue = sdr.GetValue(1).ToString(),
+                    quantity = sdr.GetValue(2).ToString()
                 };
                 result.Add(r);
             }
