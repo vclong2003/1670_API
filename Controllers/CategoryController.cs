@@ -50,6 +50,7 @@ namespace _1670_API.Controllers
             return StatusCode(200, newCategory);
         }
 
+
         // PUT: /api/category/{id}
         // Body parameters: name
         [HttpPut("{id}")]
