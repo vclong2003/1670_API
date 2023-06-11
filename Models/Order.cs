@@ -41,4 +41,11 @@ namespace _1670_API.Models
         public string? PaymentMethod { get; set; }
         public string? Status { get; set; }
     }
+
+    public class StatisticDTO
+    {
+        public List<object> revenue = new List<object>();
+        public List<object> orders = new List<object>();
+        public List<object> users = new List<object>();
+    }
 }
