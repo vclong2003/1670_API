@@ -1,19 +1,9 @@
 ﻿using _1670_API.Data;
 using _1670_API.Helpers;
-using _1670_API.Migrations;
 using _1670_API.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
 using System.Data.SqlClient;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace _1670_API.Controllers
 {
@@ -22,16 +12,18 @@ namespace _1670_API.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        public DashboardController(DataContext context) 
-        { 
+        public DashboardController(DataContext context)
+        {
             _dataContext = context;
         }
+
         [HttpGet]
         public async Task<ActionResult> Dashboard()
         {
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
-            if (accountDTO.Role == "STAFF")     
+
+            if (accountDTO.Role == "STAFF")
             {
                 List<object> results = new List<object>();
                 _ExecuteStatisticNumber(results, "Delivering");
