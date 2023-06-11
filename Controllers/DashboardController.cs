@@ -1,4 +1,11 @@
-﻿namespace _1670_API.Controllers
+﻿using _1670_API.Data;
+using _1670_API.Helpers;
+using _1670_API.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace _1670_API.Controllers
 {
     [Route("api/dashboard")]
     [ApiController]
