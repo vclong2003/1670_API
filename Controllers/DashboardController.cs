@@ -20,18 +20,16 @@ namespace _1670_API.Controllers
         [HttpGet]
         public async Task<ActionResult> Dashboard()
         {
-            StatisticDTO statistic = new StatisticDTO();
-
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null || accountDTO.Role == "CUSTOMER") { return StatusCode(401, "Unauthorized"); }
-            if (accountDTO.Role == "STAFF")
+            if (accountDTO.Role == "STAFF" || accountDTO.Role == "MANAGER")
             {
-                _ExecuteStatisticNumber(statistic);
+                StatisticDTO result = _ExecuteStatisticNumber();
                 return StatusCode(200, new
                 {
-                    revenue = statistic.revenue,
-                    orders = statistic.orders,
-                    users = statistic.users,
+                    revenue = result.revenue,
+                    orders = result.orders,
+                    users = result.users,
                 });
             }
             else
@@ -40,8 +38,9 @@ namespace _1670_API.Controllers
             }
         }
 
-        private void _ExecuteStatisticNumber(StatisticDTO statistic)
+        private StatisticDTO _ExecuteStatisticNumber()
         {
+            StatisticDTO statistic = new StatisticDTO();
             try
             {
                 SqlConnection conn = new SqlConnection();
@@ -92,12 +91,12 @@ namespace _1670_API.Controllers
                     statistic.users.Add(r);
                 }
                 conn.Close();
+                return statistic;
             }
             catch (Exception ex)
             {
-                statistic.revenue = null;
-                statistic.orders = null;
-                statistic.users = null;
+                Console.WriteLine(ex.Message);
+                return statistic;
             }
         }
     }
