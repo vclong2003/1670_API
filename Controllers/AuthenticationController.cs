@@ -24,7 +24,7 @@ namespace _1670_API.Controllers
         public async Task<ActionResult> Register(AccountDTO accountDTO)
         {
             var exsistingAccount = await _dataContext.Accounts.FirstOrDefaultAsync(a => a.Email == accountDTO.Email);
-            if (exsistingAccount != null) { return StatusCode(400, "user-existed"); } // Check if an account with the same email already exists
+            if (exsistingAccount != null) { return StatusCode(400, "Email already in use!"); } // Check if an account with the same email already exists
 
             Account newAccount = new()
             {
