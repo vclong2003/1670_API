@@ -87,12 +87,15 @@ namespace _1670_API.Controllers
             if (accountDTO == null) { return StatusCode(401, "Unauthorized"); }
             if (accountDTO.Role != "CUSTOMER") { return StatusCode(403, "Forbidden"); }
 
-            var shippingAddress = await _dataContext.ShippingAddresses.Where(s => s.Id == id && s.CustomerId == accountDTO.Id).FirstOrDefaultAsync();
+            var shippingAddress = await _dataContext.ShippingAddresses
+                .Where(s => s.Id == id && s.CustomerId == accountDTO.Id)
+                .FirstOrDefaultAsync();
+
             if (shippingAddress == null) { return StatusCode(404, "Not Found"); }
 
-            _dataContext.ShippingAddresses.Remove(shippingAddress);
-            await _dataContext.SaveChangesAsync();
+            shippingAddress.CustomerId = null; // Set CustomerId to null to prevent cascade delete
 
+            await _dataContext.SaveChangesAsync();
             return StatusCode(200);
         }
     }

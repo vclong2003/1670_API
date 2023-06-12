@@ -19,4 +19,10 @@ namespace _1670_API.Models
         public string? Password { get; set; }
         public string? Role { get; set; }
     }
+
+    public class UpdatePasswordDTO
+    {
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
 }
