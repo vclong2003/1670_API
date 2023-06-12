@@ -103,5 +103,30 @@ namespace _1670_API.Controllers
             });
             return StatusCode(200);
         }
+
+        [HttpPost("change-password")]
+        public async Task<ActionResult> ChangePassword(string oldPassword, string newPassword)
+        {
+            AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
+            if(accountDTO == null)
+            {
+                return StatusCode(200, "Unauthorized");
+            }
+            else
+            {
+                var account = _dataContext.Accounts.Where(acc=>acc.Id == accountDTO.Id).FirstOrDefault();
+                bool passwordMatched = BCrypt.Net.BCrypt.Verify(oldPassword, account.Password);
+                if(passwordMatched)
+                {
+                    account.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                    await _dataContext.SaveChangesAsync();
+                    return StatusCode(200, "Change Password Successfully");
+                }
+                else
+                {
+                    return StatusCode(200, "Password not match");
+                }
+            }
+        }
     }
 }
