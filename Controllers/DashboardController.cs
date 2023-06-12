@@ -20,9 +20,11 @@ namespace _1670_API.Controllers
         [HttpGet]
         public async Task<ActionResult> Dashboard()
         {
+            StatisticDTO statistic = new StatisticDTO();
+
             AccountDTO accountDTO = JwtHandler.ValiateToken(Request.HttpContext);
             if (accountDTO == null || accountDTO.Role == "CUSTOMER") { return StatusCode(401, "Unauthorized"); }
-            if (accountDTO.Role == "STAFF" || accountDTO.Role == "MANAGER")
+            if (accountDTO.Role == "STAFF")
             {
                 StatisticDTO result = _ExecuteStatisticNumber();
                 return StatusCode(200, new
@@ -47,7 +49,7 @@ namespace _1670_API.Controllers
                 conn.ConnectionString = "Server=tcp:1670.database.windows.net,1433;Initial Catalog=1670_db;Persist Security Info=False;User ID=admin123;Password=Admin1670;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
                 SqlCommand cmdRevenue = new SqlCommand("PRO_TotalRevenue", conn);
                 cmdRevenue.CommandType = CommandType.StoredProcedure;
-                cmdRevenue.Parameters.AddWithValue("@status", "Delivering");
+                cmdRevenue.Parameters.AddWithValue("@status", "Delivered");
                 conn.Open();
 
                 SqlDataReader cmdRdRevenue = cmdRevenue.ExecuteReader();
@@ -95,7 +97,6 @@ namespace _1670_API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return statistic;
             }
         }
