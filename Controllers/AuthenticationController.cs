@@ -104,6 +104,8 @@ namespace _1670_API.Controllers
             return StatusCode(200);
         }
 
+        // PUT: /auth/update-password
+        // body: oldPassword, newPassword
         [HttpPut("update-password")]
         public async Task<ActionResult> ChangePassword(UpdatePasswordDTO updatePasswordDTO)
         {
