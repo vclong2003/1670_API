@@ -2,7 +2,9 @@
 using _1670_API.Helpers;
 using _1670_API.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace _1670_API.Controllers
 {
@@ -98,6 +100,58 @@ namespace _1670_API.Controllers
             await _dataContext.SaveChangesAsync();
 
             return StatusCode(200, product);
+        }
+
+        [HttpGet("home-products")]
+        public async Task<ActionResult> BestSelling()
+        {
+            ProductHomeDTO productHome = new ProductHomeDTO();
+            try
+            {
+                SqlConnection conn = Conn.Connection();
+                SqlCommand cmd = new SqlCommand("PRO_Selling_Products", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                conn.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var r = new
+                    {
+                        id = reader.GetValue(0),
+                        name = reader.GetValue(1),
+                        price = reader.GetValue(2),
+                        url = reader.GetValue(3),
+                        author = reader.GetValue(4),
+                    };
+                    productHome.bestSelling.Add(r);
+                }
+                conn.Close();
+
+                SqlCommand cmd2= new SqlCommand("PRO_Newly_Products", conn);
+                cmd2.CommandType = CommandType.StoredProcedure;
+                conn.Open();
+                SqlDataReader reader2 = cmd2.ExecuteReader();
+                while (reader2.Read())
+                {
+                    var r = new
+                    {
+                        id = reader2.GetValue(0),
+                        name = reader2.GetValue(1),
+                        price = reader2.GetValue(2),
+                        url = reader2.GetValue(3),
+                        author = reader2.GetValue(4),
+                    };
+                    productHome.newlyProduct.Add(r);
+                }
+                conn.Close();
+
+                return StatusCode(200, new { productHome.bestSelling, productHome.newlyProduct });
+            }
+            catch
+            {
+                return StatusCode(401, null);
+            }
+
         }
     }
 }

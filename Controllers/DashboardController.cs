@@ -42,8 +42,7 @@ namespace _1670_API.Controllers
             StatisticDTO statistic = new StatisticDTO();
             try
             {
-                SqlConnection conn = new SqlConnection();
-                conn.ConnectionString = "Server=tcp:1670.database.windows.net,1433;Initial Catalog=1670_db;Persist Security Info=False;User ID=admin123;Password=Admin1670;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+                SqlConnection conn = Conn.Connection();
                 SqlCommand cmdRevenue = new SqlCommand("PRO_TotalRevenue", conn);
                 cmdRevenue.CommandType = CommandType.StoredProcedure;
                 cmdRevenue.Parameters.AddWithValue("@status", "Delivered");
