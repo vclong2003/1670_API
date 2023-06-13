@@ -2,9 +2,9 @@
 using _1670_API.Helpers;
 using _1670_API.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace _1670_API.Controllers
 {
@@ -102,7 +102,7 @@ namespace _1670_API.Controllers
             return StatusCode(200, product);
         }
 
-        [HttpGet("home-products")]
+        [HttpGet("featured")]
         public async Task<ActionResult> BestSelling()
         {
             ProductHomeDTO productHome = new ProductHomeDTO();
@@ -127,7 +127,7 @@ namespace _1670_API.Controllers
                 }
                 conn.Close();
 
-                SqlCommand cmd2= new SqlCommand("PRO_Newly_Products", conn);
+                SqlCommand cmd2 = new SqlCommand("PRO_Newly_Products", conn);
                 cmd2.CommandType = CommandType.StoredProcedure;
                 conn.Open();
                 SqlDataReader reader2 = cmd2.ExecuteReader();
