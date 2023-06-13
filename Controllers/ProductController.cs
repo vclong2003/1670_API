@@ -103,7 +103,7 @@ namespace _1670_API.Controllers
         }
 
         [HttpGet("featured")]
-        public async Task<ActionResult> BestSelling()
+        public async Task<ActionResult> GetFeatured()
         {
             ProductHomeDTO productHome = new ProductHomeDTO();
             try
@@ -120,7 +120,7 @@ namespace _1670_API.Controllers
                         id = reader.GetValue(0),
                         name = reader.GetValue(1),
                         price = reader.GetValue(2),
-                        url = reader.GetValue(3),
+                        thumbnailUrl = reader.GetValue(3),
                         author = reader.GetValue(4),
                     };
                     productHome.bestSelling.Add(r);
@@ -138,7 +138,7 @@ namespace _1670_API.Controllers
                         id = reader2.GetValue(0),
                         name = reader2.GetValue(1),
                         price = reader2.GetValue(2),
-                        url = reader2.GetValue(3),
+                        thumbnailUrl = reader2.GetValue(3),
                         author = reader2.GetValue(4),
                     };
                     productHome.newlyProduct.Add(r);
