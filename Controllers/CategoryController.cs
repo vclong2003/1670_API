@@ -19,7 +19,7 @@ namespace _1670_API.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var categories = await _dataContext.Categories.ToListAsync();
+            var categories = await _dataContext.Categories.Select(c=> new {id = c.Id,name = c.Name,description = c.Description,count =c.Products.Count }).ToListAsync();
             return StatusCode(200, categories);
         }
 
